@@ -118,7 +118,14 @@ class Softmax(object):
         # YOUR CODE HERE:
         #   Calculate the softmax loss and gradient WITHOUT any for loops.
         # ================================================================ #
-        pass
+        scores = X @ self.W.T
+        scores -= np.max(scores, axis=1, keepdims=True)
+        softmax_probs = np.exp(scores) / np.sum(np.exp(scores), axis=1, keepdims=True)
+        loss += -np.log(softmax_probs[np.arange(X.shape[0]), y]).sum()
+        softmax_probs[np.arange(X.shape[0]), y] -= 1
+        grad = softmax_probs.T @ X
+        loss /= X.shape[0]
+        grad /= X.shape[0]
 
         # ================================================================ #
         # END YOUR CODE HERE
@@ -166,7 +173,11 @@ class Softmax(object):
             #   in the dataset.  Use np.random.choice.  It's okay to sample with
             #   replacement.
             # ================================================================ #
-            pass
+            np.random.seed(it)
+            batch = np.random.choice(num_train, batch_size, replace=True)
+            X_batch = X[batch]
+            y_batch = y[batch]
+
             # ================================================================ #
             # END YOUR CODE HERE
             # ================================================================ #
@@ -179,7 +190,7 @@ class Softmax(object):
             # YOUR CODE HERE:
             #   Update the parameters, self.W, with a gradient step
             # ================================================================ #
-            pass
+            self.W -= learning_rate * grad
 
             # ================================================================ #
             # END YOUR CODE HERE
@@ -205,7 +216,8 @@ class Softmax(object):
         # YOUR CODE HERE:
         #   Predict the labels given the training data.
         # ================================================================ #
-        pass
+        scores = X @ self.W.T
+        y_pred = np.argmax(scores, axis=1)
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
