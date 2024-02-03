@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 class TwoLayerNet(object):
-  """
+    """
   A two-layer fully-connected neural network. The net has an input dimension of
   D, a hidden layer dimension of H, and performs classification over C classes.
   We train the network with a softmax loss function and L2 regularization on the
@@ -17,8 +17,8 @@ class TwoLayerNet(object):
   The outputs of the second fully-connected layer are the scores for each class.
   """
 
-  def __init__(self, input_size, hidden_size, output_size, std=1e-4):
-    """
+    def __init__(self, input_size, hidden_size, output_size, std=1e-4):
+        """
     Initialize the model. Weights are initialized to small random values and
     biases are initialized to zero. Weights and biases are stored in the
     variable self.params, which is a dictionary with the following keys:
@@ -33,15 +33,14 @@ class TwoLayerNet(object):
     - hidden_size: The number of neurons H in the hidden layer.
     - output_size: The number of classes C.
     """
-    self.params = {}
-    self.params['W1'] = std * np.random.randn(hidden_size, input_size)
-    self.params['b1'] = np.zeros(hidden_size)
-    self.params['W2'] = std * np.random.randn(output_size, hidden_size)
-    self.params['b2'] = np.zeros(output_size)
+        self.params = {}
+        self.params['W1'] = std * np.random.randn(hidden_size, input_size)
+        self.params['b1'] = np.zeros(hidden_size)
+        self.params['W2'] = std * np.random.randn(output_size, hidden_size)
+        self.params['b2'] = np.zeros(output_size)
 
-
-  def loss(self, X, y=None, reg=0.0):
-    """
+    def loss(self, X, y=None, reg=0.0):
+        """
     Compute the loss and gradients for a two layer fully connected neural
     network.
 
@@ -63,76 +62,89 @@ class TwoLayerNet(object):
     - grads: Dictionary mapping parameter names to gradients of those parameters
       with respect to the loss function; has the same keys as self.params.
     """
-    # Unpack variables from the params dictionary
-    W1, b1 = self.params['W1'], self.params['b1']
-    W2, b2 = self.params['W2'], self.params['b2']
-    N, D = X.shape
+        # Unpack variables from the params dictionary
+        W1, b1 = self.params['W1'], self.params['b1']
+        W2, b2 = self.params['W2'], self.params['b2']
+        N, D = X.shape
+        # Compute the forward pass
+        scores = None
 
-    # Compute the forward pass
-    scores = None
+        # ================================================================ #
+        # YOUR CODE HERE:
+        #   Calculate the output scores of the neural network.  The result
+        #   should be (N, C). As stated in the description for this class,
+        #   there should not be a ReLU layer after the second FC layer.
+        #   The output of the second FC layer is the output scores. Do not
+        #   use a for loop in your implementation.
+        # ================================================================ #
 
-    # ================================================================ #
-    # YOUR CODE HERE:
-    #   Calculate the output scores of the neural network.  The result
-    #   should be (N, C). As stated in the description for this class,
-    #   there should not be a ReLU layer after the second FC layer.
-    #   The output of the second FC layer is the output scores. Do not
-    #   use a for loop in your implementation.
-    # ================================================================ #
+        scores = np.dot(W1, X.T) + b1.reshape(-1, 1)
+        scores = np.maximum(0, scores)
+        scores = np.dot(W2, scores) + b2.reshape(-1, 1)
+        scores = scores.T
 
-    pass
-    
-    # ================================================================ #
-    # END YOUR CODE HERE
-    # ================================================================ #
+        # ================================================================ #
+        # END YOUR CODE HERE
+        # ================================================================ #
 
-  
-    # If the targets are not given then jump out, we're done
-    if y is None:
-      return scores
+        # If the targets are not given then jump out, we're done
+        if y is None:
+            return scores
 
-    # Compute the loss
-    loss = None
+        # Compute the loss
+        loss = None
 
-    # ================================================================ #
-    # YOUR CODE HERE:
-    #   Calculate the loss of the neural network.  This includes the
-    #   softmax loss and the L2 regularization for W1 and W2. Store the
-    #   total loss in teh variable loss.  Multiply the regularization
-    #   loss by 0.5 (in addition to the factor reg).
-    # ================================================================ #
+        # ================================================================ #
+        # YOUR CODE HERE:
+        #   Calculate the loss of the neural network.  This includes the
+        #   softmax loss and the L2 regularization for W1 and W2. Store the
+        #   total loss in teh variable loss.  Multiply the regularization
+        #   loss by 0.5 (in addition to the factor reg).
+        # ================================================================ #
 
-    # scores is num_examples by num_classes
+        # scores is num_examples by num_classes
+        softmax_probs = np.exp(scores) / np.sum(np.exp(scores), axis=1, keepdims=True)
+        softmax_loss = -np.log(softmax_probs[np.arange(X.shape[0]), y]).sum() / N
+        reg_loss = 0.5 * reg * (np.sum(W1 * W1) + np.sum(W2 * W2))
+        loss = softmax_loss + reg_loss
 
-    pass
-  
-    # ================================================================ #
-    # END YOUR CODE HERE
-    # ================================================================ #
+        # ================================================================ #
+        # END YOUR CODE HERE
+        # ================================================================ #
 
-    grads = {}
+        grads = {}
 
-    # ================================================================ #
-    # YOUR CODE HERE:
-    #   Implement the backward pass.  Compute the derivatives of the
-    #   weights and the biases.  Store the results in the grads
-    #   dictionary.  e.g., grads['W1'] should store the gradient for
-    #   W1, and be of the same size as W1.
-    # ================================================================ #
+        # ================================================================ #
+        # YOUR CODE HERE:
+        #   Implement the backward pass.  Compute the derivatives of the
+        #   weights and the biases.  Store the results in the grads
+        #   dictionary.  e.g., grads['W1'] should store the gradient for
+        #   W1, and be of the same size as W1.
+        # ================================================================ #
 
-    pass
+        softmax_probs[np.arange(X.shape[0]), y] -= 1
+        softmax_grad = softmax_probs.T / N
+        grads['b2'] = softmax_grad.sum(axis=1)
+        grads['W2'] = softmax_grad @ np.maximum(0, np.dot(W1, X.T) + b1.reshape(-1, 1)).T
 
-    # ================================================================ #
-    # END YOUR CODE HERE
-    # ================================================================ #
+        relu_grad = (np.dot(W2.T, softmax_grad) * (np.dot(W1, X.T) + b1.reshape(-1, 1) > 0)).T
+        grads['b1'] = relu_grad.sum(axis=0)
+        grads['W1'] = relu_grad.T @ X
 
-    return loss, grads
+        grads['W1'] += reg * W1
+        grads['W2'] += reg * W2
 
-  def train(self, X, y, X_val, y_val,
-            learning_rate=1e-3, learning_rate_decay=0.95,
-            reg=1e-5, num_iters=100,
-            batch_size=200, verbose=False):
-    """
+        # ================================================================ #
+        # END YOUR CODE HERE
+        # ================================================================ #
+
+        return loss, grads
+
+    def train(self, X, y, X_val, y_val,
+              learning_rate=1e-3, learning_rate_decay=0.95,
+              reg=1e-5, num_iters=100,
+              batch_size=200, verbose=False):
+        """
     Train this neural network using stochastic gradient descent.
 
     Inputs:
@@ -149,66 +161,72 @@ class TwoLayerNet(object):
     - batch_size: Number of training examples to use per step.
     - verbose: boolean; if true print progress during optimization.
     """
-    num_train = X.shape[0]
-    iterations_per_epoch = max(num_train / batch_size, 1)
+        num_train = X.shape[0]
+        iterations_per_epoch = max(num_train / batch_size, 1)
 
-    # Use SGD to optimize the parameters in self.model
-    loss_history = []
-    train_acc_history = []
-    val_acc_history = []
+        # Use SGD to optimize the parameters in self.model
+        loss_history = []
+        train_acc_history = []
+        val_acc_history = []
 
-    for it in np.arange(num_iters):
-      X_batch = None
-      y_batch = None
+        for it in np.arange(num_iters):
+            X_batch = None
+            y_batch = None
 
-      # ================================================================ #
-      # YOUR CODE HERE:
-      #   Create a minibatch by sampling batch_size samples randomly.
-      # ================================================================ #
-      pass
+            # ================================================================ #
+            # YOUR CODE HERE:
+            #   Create a minibatch by sampling batch_size samples randomly.
+            # ================================================================ #
+            np.random.seed(it)
+            rand_indices = np.random.choice(num_train, batch_size, replace=True)
+            X_batch = X[rand_indices]
+            y_batch = y[rand_indices]
 
-      # ================================================================ #
-      # END YOUR CODE HERE
-      # ================================================================ #
+            # ================================================================ #
+            # END YOUR CODE HERE
+            # ================================================================ #
 
-       # Compute loss and gradients using the current minibatch
-      loss, grads = self.loss(X_batch, y=y_batch, reg=reg)
-      loss_history.append(loss)
+            # Compute loss and gradients using the current minibatch
+            loss, grads = self.loss(X_batch, y=y_batch, reg=reg)
+            loss_history.append(loss)
 
-      # ================================================================ #
-      # YOUR CODE HERE:
-      #   Perform a gradient descent step using the minibatch to update
-      #   all parameters (i.e., W1, W2, b1, and b2).
-      # ================================================================ #
+            # ================================================================ #
+            # YOUR CODE HERE:
+            #   Perform a gradient descent step using the minibatch to update
+            #   all parameters (i.e., W1, W2, b1, and b2).
+            # ================================================================ #
 
-      pass
+            self.params['W1'] -= learning_rate * grads['W1']
+            self.params['b1'] -= learning_rate * grads['b1']
+            self.params['W2'] -= learning_rate * grads['W2']
+            self.params['b2'] -= learning_rate * grads['b2']
 
-      # ================================================================ #
-      # END YOUR CODE HERE
-      # ================================================================ #
+            # ================================================================ #
+            # END YOUR CODE HERE
+            # ================================================================ #
 
-      if verbose and it % 100 == 0:
-        print('iteration {} / {}: loss {}'.format(it, num_iters, loss))
+            if verbose and it % 100 == 0:
+                print('iteration {} / {}: loss {}'.format(it, num_iters, loss))
 
-      # Every epoch, check train and val accuracy and decay learning rate.
-      if it % iterations_per_epoch == 0:
-        # Check accuracy
-        train_acc = (self.predict(X_batch) == y_batch).mean()
-        val_acc = (self.predict(X_val) == y_val).mean()
-        train_acc_history.append(train_acc)
-        val_acc_history.append(val_acc)
+            # Every epoch, check train and val accuracy and decay learning rate.
+            if it % iterations_per_epoch == 0:
+                # Check accuracy
+                train_acc = (self.predict(X_batch) == y_batch).mean()
+                val_acc = (self.predict(X_val) == y_val).mean()
+                train_acc_history.append(train_acc)
+                val_acc_history.append(val_acc)
 
-        # Decay learning rate
-        learning_rate *= learning_rate_decay
+                # Decay learning rate
+                learning_rate *= learning_rate_decay
 
-    return {
-      'loss_history': loss_history,
-      'train_acc_history': train_acc_history,
-      'val_acc_history': val_acc_history,
-    }
+        return {
+            'loss_history': loss_history,
+            'train_acc_history': train_acc_history,
+            'val_acc_history': val_acc_history,
+        }
 
-  def predict(self, X):
-    """
+    def predict(self, X):
+        """
     Use the trained weights of this two-layer network to predict labels for
     data points. For each data point we predict scores for each of the C
     classes, and assign each data point to the class with the highest score.
@@ -222,17 +240,16 @@ class TwoLayerNet(object):
       the elements of X. For all i, y_pred[i] = c means that X[i] is predicted
       to have class c, where 0 <= c < C.
     """
-    y_pred = None
+        y_pred = None
 
-    # ================================================================ #
-    # YOUR CODE HERE:
-    #   Predict the class given the input data.
-    # ================================================================ #
-    pass
+        # ================================================================ #
+        # YOUR CODE HERE:
+        #   Predict the class given the input data.
+        # ================================================================ #
+        scores = self.loss(X)
+        y_pred = np.argmax(scores, axis=1)
+        # ================================================================ #
+        # END YOUR CODE HERE
+        # ================================================================ #
 
-
-    # ================================================================ #
-    # END YOUR CODE HERE
-    # ================================================================ #
-
-    return y_pred
+        return y_pred
