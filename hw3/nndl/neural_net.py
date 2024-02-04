@@ -104,7 +104,7 @@ class TwoLayerNet(object):
 
         # scores is num_examples by num_classes
         softmax_probs = np.exp(scores) / np.sum(np.exp(scores), axis=1, keepdims=True)
-        softmax_loss = -np.log(softmax_probs[np.arange(X.shape[0]), y]).sum() / N
+        softmax_loss = -np.log(softmax_probs[np.arange(N), y]).sum() / N
         reg_loss = 0.5 * reg * (np.sum(W1 * W1) + np.sum(W2 * W2))
         loss = softmax_loss + reg_loss
 
@@ -127,9 +127,9 @@ class TwoLayerNet(object):
         grads['b2'] = softmax_grad.sum(axis=1)
         grads['W2'] = softmax_grad @ np.maximum(0, np.dot(W1, X.T) + b1.reshape(-1, 1)).T
 
-        relu_grad = (np.dot(W2.T, softmax_grad) * (np.dot(W1, X.T) + b1.reshape(-1, 1) > 0)).T
-        grads['b1'] = relu_grad.sum(axis=0)
-        grads['W1'] = relu_grad.T @ X
+        relu_grad = (np.dot(W2.T, softmax_grad) * (np.dot(W1, X.T) + b1.reshape(-1, 1) > 0))
+        grads['b1'] = relu_grad.sum(axis=1)
+        grads['W1'] = relu_grad @ X
 
         grads['W1'] += reg * W1
         grads['W2'] += reg * W2
@@ -248,6 +248,7 @@ class TwoLayerNet(object):
         # ================================================================ #
         scores = self.loss(X)
         y_pred = np.argmax(scores, axis=1)
+
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
