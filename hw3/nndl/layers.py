@@ -2,10 +2,8 @@ import numpy as np
 import pdb
 
 
-
-
 def affine_forward(x, w, b):
-  """
+    """
   Computes the forward pass for an affine (fully-connected) layer.
 
   The input x has shape (N, d_1, ..., d_k) and contains a minibatch of N
@@ -17,31 +15,32 @@ def affine_forward(x, w, b):
   - x: A numpy array containing input data, of shape (N, d_1, ..., d_k)
   - w: A numpy array of weights, of shape (D, M)
   - b: A numpy array of biases, of shape (M,)
-  
+
   Returns a tuple of:
   - out: output, of shape (N, M)
   - cache: (x, w, b)
   """
 
-  # ================================================================ #
-  # YOUR CODE HERE:
-  #   Calculate the output of the forward pass.  Notice the dimensions
-  #   of w are D x M, which is the transpose of what we did in earlier 
-  #   assignments.
-  # ================================================================ #
+    # ================================================================ #
+    # YOUR CODE HERE:
+    #   Calculate the output of the forward pass.  Notice the dimensions
+    #   of w are D x M, which is the transpose of what we did in earlier
+    #   assignments.
+    # ================================================================ #
 
-  pass
+    x_new = x.reshape((x.shape[0], -1))
+    out = x_new @ w + b.reshape((1, -1))
 
-  # ================================================================ #
-  # END YOUR CODE HERE
-  # ================================================================ #
-    
-  cache = (x, w, b)
-  return out, cache
+    # ================================================================ #
+    # END YOUR CODE HERE
+    # ================================================================ #
+
+    cache = (x, w, b)
+    return out, cache
 
 
 def affine_backward(dout, cache):
-  """
+    """
   Computes the backward pass for an affine layer.
 
   Inputs:
@@ -55,29 +54,33 @@ def affine_backward(dout, cache):
   - dw: Gradient with respect to w, of shape (D, M)
   - db: Gradient with respect to b, of shape (M,)
   """
-  x, w, b = cache
-  dx, dw, db = None, None, None
+    x, w, b = cache
+    dx, dw, db = None, None, None
 
-  # ================================================================ #
-  # YOUR CODE HERE:
-  #   Calculate the gradients for the backward pass.
-  # ================================================================ #
+    # ================================================================ #
+    # YOUR CODE HERE:
+    #   Calculate the gradients for the backward pass.
+    # ================================================================ #
 
-  # dout is N x M
-  # dx should be N x d1 x ... x dk; it relates to dout through multiplication with w, which is D x M
-  # dw should be D x M; it relates to dout through multiplication with x, which is N x D after reshaping
-  # db should be M; it is just the sum over dout examples
+    # dout is N x M
+    # dx should be N x d1 x ... x dk; it relates to dout through multiplication with w, which is D x M
+    # dw should be D x M; it relates to dout through multiplication with x, which is N x D after reshaping
+    # db should be M; it is just the sum over dout examples
 
-  pass
+    x_new = x.reshape((x.shape[0], -1))
+    db = np.sum(dout.T, axis=1, keepdims=True)
+    dx = (dout @ w.T).reshape(x.shape)
+    dw = x_new.T @ dout
 
-  # ================================================================ #
-  # END YOUR CODE HERE
-  # ================================================================ #
-  
-  return dx, dw, db
+    # ================================================================ #
+    # END YOUR CODE HERE
+    # ================================================================ #
+
+    return dx, dw, db
+
 
 def relu_forward(x):
-  """
+    """
   Computes the forward pass for a layer of rectified linear units (ReLUs).
 
   Input:
@@ -87,22 +90,22 @@ def relu_forward(x):
   - out: Output, of the same shape as x
   - cache: x
   """
-  # ================================================================ #
-  # YOUR CODE HERE:
-  #   Implement the ReLU forward pass.
-  # ================================================================ #
+    # ================================================================ #
+    # YOUR CODE HERE:
+    #   Implement the ReLU forward pass.
+    # ================================================================ #
 
-  pass
-  # ================================================================ #
-  # END YOUR CODE HERE
-  # ================================================================ #
- 
-  cache = x
-  return out, cache
+    out = np.maximum(0, x)
+    # ================================================================ #
+    # END YOUR CODE HERE
+    # ================================================================ #
+
+    cache = x
+    return out, cache
 
 
 def relu_backward(dout, cache):
-  """
+    """
   Computes the backward pass for a layer of rectified linear units (ReLUs).
 
   Input:
@@ -112,25 +115,25 @@ def relu_backward(dout, cache):
   Returns:
   - dx: Gradient with respect to x
   """
-  x = cache
+    x = cache
 
-  # ================================================================ #
-  # YOUR CODE HERE:
-  #   Implement the ReLU backward pass
-  # ================================================================ #
+    # ================================================================ #
+    # YOUR CODE HERE:
+    #   Implement the ReLU backward pass
+    # ================================================================ #
 
-  # ReLU directs linearly to those > 0
-  pass
-    
-  # ================================================================ #
-  # END YOUR CODE HERE
-  # ================================================================ #
- 
-  return dx
+    # ReLU directs linearly to those > 0
+    dx = dout * (x > 0)
+
+    # ================================================================ #
+    # END YOUR CODE HERE
+    # ================================================================ #
+
+    return dx
 
 
 def softmax_loss(x, y):
-  """
+    """
   Computes the loss and gradient for softmax classification.
 
   Inputs:
@@ -144,11 +147,11 @@ def softmax_loss(x, y):
   - dx: Gradient of the loss with respect to x
   """
 
-  probs = np.exp(x - np.max(x, axis=1, keepdims=True))
-  probs /= np.sum(probs, axis=1, keepdims=True)
-  N = x.shape[0]
-  loss = -np.sum(np.log(probs[np.arange(N), y])) / N
-  dx = probs.copy()
-  dx[np.arange(N), y] -= 1
-  dx /= N
-  return loss, dx
+    probs = np.exp(x - np.max(x, axis=1, keepdims=True))
+    probs /= np.sum(probs, axis=1, keepdims=True)
+    N = x.shape[0]
+    loss = -np.sum(np.log(probs[np.arange(N), y])) / N
+    dx = probs.copy()
+    dx[np.arange(N), y] -= 1
+    dx /= N
+    return loss, dx
