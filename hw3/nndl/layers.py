@@ -29,7 +29,7 @@ def affine_forward(x, w, b):
     # ================================================================ #
 
     x_new = x.reshape((x.shape[0], -1))
-    out = x_new @ w + b.reshape((1, -1))
+    out = x_new @ w + b
 
     # ================================================================ #
     # END YOUR CODE HERE
@@ -68,7 +68,7 @@ def affine_backward(dout, cache):
     # db should be M; it is just the sum over dout examples
 
     x_new = x.reshape((x.shape[0], -1))
-    db = np.sum(dout.T, axis=1, keepdims=True)
+    db = np.sum(dout.T, axis=1)
     dx = (dout @ w.T).reshape(x.shape)
     dw = x_new.T @ dout
 
