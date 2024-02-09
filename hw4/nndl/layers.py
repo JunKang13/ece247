@@ -307,7 +307,8 @@ def dropout_forward(x, dropout_param):
         #   Store the masked and scaled activations in out, and store the
         #   dropout mask as the variable mask.
         # ================================================================ #
-        pass
+        mask = (np.random.rand(*x.shape) < p) / p
+        out = x * mask
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
@@ -318,7 +319,7 @@ def dropout_forward(x, dropout_param):
         # YOUR CODE HERE:
         #   Implement the inverted dropout forward pass during test time.
         # ================================================================ #
-        pass
+        out = x
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
@@ -346,7 +347,7 @@ def dropout_backward(dout, cache):
         # YOUR CODE HERE:
         #   Implement the inverted dropout backward pass during training time.
         # ================================================================ #
-        pass
+        dx = dout * mask
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
@@ -355,7 +356,7 @@ def dropout_backward(dout, cache):
         # YOUR CODE HERE:
         #   Implement the inverted dropout backward pass during test time.
         # ================================================================ #
-        pass
+        dx = dout
         # ================================================================ #
         # END YOUR CODE HERE
         # ================================================================ #
