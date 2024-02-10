@@ -1,0 +1,180 @@
+<html>
+<head>
+<title>layers.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #c679dd; font-style: italic;}
+.s1 { color: #abb2bf;}
+.s2 { color: #a6b2c0;}
+.s3 { color: #61afef;}
+.s4 { color: #59626f; font-style: italic;}
+.s5 { color: #d19a66;}
+.ln { color: #636d83; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#282c34">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+layers.py</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<a name="l2"><span class="ln">2    </span></a><span class="s0">import </span><span class="s1">pdb</span>
+<a name="l3"><span class="ln">3    </span></a>
+<a name="l4"><span class="ln">4    </span></a>
+<a name="l5"><span class="ln">5    </span></a><span class="s0">def </span><span class="s1">affine_forward</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">w</span><span class="s2">, </span><span class="s1">b</span><span class="s2">)</span><span class="s3">:</span>
+<a name="l6"><span class="ln">6    </span></a>    <span class="s4">&quot;&quot;&quot; 
+<a name="l7"><span class="ln">7    </span></a>  Computes the forward pass for an affine (fully-connected) layer. 
+<a name="l8"><span class="ln">8    </span></a> 
+<a name="l9"><span class="ln">9    </span></a>  The input x has shape (N, d_1, ..., d_k) and contains a minibatch of N 
+<a name="l10"><span class="ln">10   </span></a>  examples, where each example x[i] has shape (d_1, ..., d_k). We will 
+<a name="l11"><span class="ln">11   </span></a>  reshape each input into a vector of dimension D = d_1 * ... * d_k, and 
+<a name="l12"><span class="ln">12   </span></a>  then transform it to an output vector of dimension M. 
+<a name="l13"><span class="ln">13   </span></a> 
+<a name="l14"><span class="ln">14   </span></a>  Inputs: 
+<a name="l15"><span class="ln">15   </span></a>  - x: A numpy array containing input data, of shape (N, d_1, ..., d_k) 
+<a name="l16"><span class="ln">16   </span></a>  - w: A numpy array of weights, of shape (D, M) 
+<a name="l17"><span class="ln">17   </span></a>  - b: A numpy array of biases, of shape (M,) 
+<a name="l18"><span class="ln">18   </span></a> 
+<a name="l19"><span class="ln">19   </span></a>  Returns a tuple of: 
+<a name="l20"><span class="ln">20   </span></a>  - out: output, of shape (N, M) 
+<a name="l21"><span class="ln">21   </span></a>  - cache: (x, w, b) 
+<a name="l22"><span class="ln">22   </span></a>  &quot;&quot;&quot;</span>
+<a name="l23"><span class="ln">23   </span></a>
+<a name="l24"><span class="ln">24   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l25"><span class="ln">25   </span></a>    <span class="s4"># YOUR CODE HERE:</span>
+<a name="l26"><span class="ln">26   </span></a>    <span class="s4">#   Calculate the output of the forward pass.  Notice the dimensions</span>
+<a name="l27"><span class="ln">27   </span></a>    <span class="s4">#   of w are D x M, which is the transpose of what we did in earlier</span>
+<a name="l28"><span class="ln">28   </span></a>    <span class="s4">#   assignments.</span>
+<a name="l29"><span class="ln">29   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l30"><span class="ln">30   </span></a>
+<a name="l31"><span class="ln">31   </span></a>    <span class="s1">x_new </span><span class="s3">= </span><span class="s1">x</span><span class="s2">.</span><span class="s1">reshape</span><span class="s2">((</span><span class="s1">x</span><span class="s2">.</span><span class="s1">shape</span><span class="s2">[</span><span class="s5">0</span><span class="s2">], </span><span class="s3">-</span><span class="s5">1</span><span class="s2">))</span>
+<a name="l32"><span class="ln">32   </span></a>    <span class="s1">out </span><span class="s3">= </span><span class="s1">x_new </span><span class="s3">@ </span><span class="s1">w </span><span class="s3">+ </span><span class="s1">b</span>
+<a name="l33"><span class="ln">33   </span></a>
+<a name="l34"><span class="ln">34   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l35"><span class="ln">35   </span></a>    <span class="s4"># END YOUR CODE HERE</span>
+<a name="l36"><span class="ln">36   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l37"><span class="ln">37   </span></a>
+<a name="l38"><span class="ln">38   </span></a>    <span class="s1">cache </span><span class="s3">= </span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">w</span><span class="s2">, </span><span class="s1">b</span><span class="s2">)</span>
+<a name="l39"><span class="ln">39   </span></a>    <span class="s0">return </span><span class="s1">out</span><span class="s2">, </span><span class="s1">cache</span>
+<a name="l40"><span class="ln">40   </span></a>
+<a name="l41"><span class="ln">41   </span></a>
+<a name="l42"><span class="ln">42   </span></a><span class="s0">def </span><span class="s1">affine_backward</span><span class="s2">(</span><span class="s1">dout</span><span class="s2">, </span><span class="s1">cache</span><span class="s2">)</span><span class="s3">:</span>
+<a name="l43"><span class="ln">43   </span></a>    <span class="s4">&quot;&quot;&quot; 
+<a name="l44"><span class="ln">44   </span></a>  Computes the backward pass for an affine layer. 
+<a name="l45"><span class="ln">45   </span></a> 
+<a name="l46"><span class="ln">46   </span></a>  Inputs: 
+<a name="l47"><span class="ln">47   </span></a>  - dout: Upstream derivative, of shape (N, M) 
+<a name="l48"><span class="ln">48   </span></a>  - cache: Tuple of: 
+<a name="l49"><span class="ln">49   </span></a>    - x: Input data, of shape (N, d_1, ... d_k) 
+<a name="l50"><span class="ln">50   </span></a>    - w: Weights, of shape (D, M) 
+<a name="l51"><span class="ln">51   </span></a> 
+<a name="l52"><span class="ln">52   </span></a>  Returns a tuple of: 
+<a name="l53"><span class="ln">53   </span></a>  - dx: Gradient with respect to x, of shape (N, d1, ..., d_k) 
+<a name="l54"><span class="ln">54   </span></a>  - dw: Gradient with respect to w, of shape (D, M) 
+<a name="l55"><span class="ln">55   </span></a>  - db: Gradient with respect to b, of shape (M,) 
+<a name="l56"><span class="ln">56   </span></a>  &quot;&quot;&quot;</span>
+<a name="l57"><span class="ln">57   </span></a>    <span class="s1">x</span><span class="s2">, </span><span class="s1">w</span><span class="s2">, </span><span class="s1">b </span><span class="s3">= </span><span class="s1">cache</span>
+<a name="l58"><span class="ln">58   </span></a>    <span class="s1">dx</span><span class="s2">, </span><span class="s1">dw</span><span class="s2">, </span><span class="s1">db </span><span class="s3">= </span><span class="s0">None</span><span class="s2">, </span><span class="s0">None</span><span class="s2">, </span><span class="s0">None</span>
+<a name="l59"><span class="ln">59   </span></a>
+<a name="l60"><span class="ln">60   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l61"><span class="ln">61   </span></a>    <span class="s4"># YOUR CODE HERE:</span>
+<a name="l62"><span class="ln">62   </span></a>    <span class="s4">#   Calculate the gradients for the backward pass.</span>
+<a name="l63"><span class="ln">63   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l64"><span class="ln">64   </span></a>
+<a name="l65"><span class="ln">65   </span></a>    <span class="s4"># dout is N x M</span>
+<a name="l66"><span class="ln">66   </span></a>    <span class="s4"># dx should be N x d1 x ... x dk; it relates to dout through multiplication with w, which is D x M</span>
+<a name="l67"><span class="ln">67   </span></a>    <span class="s4"># dw should be D x M; it relates to dout through multiplication with x, which is N x D after reshaping</span>
+<a name="l68"><span class="ln">68   </span></a>    <span class="s4"># db should be M; it is just the sum over dout examples</span>
+<a name="l69"><span class="ln">69   </span></a>
+<a name="l70"><span class="ln">70   </span></a>    <span class="s1">x_new </span><span class="s3">= </span><span class="s1">x</span><span class="s2">.</span><span class="s1">reshape</span><span class="s2">((</span><span class="s1">x</span><span class="s2">.</span><span class="s1">shape</span><span class="s2">[</span><span class="s5">0</span><span class="s2">], </span><span class="s3">-</span><span class="s5">1</span><span class="s2">))</span>
+<a name="l71"><span class="ln">71   </span></a>    <span class="s1">db </span><span class="s3">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">sum</span><span class="s2">(</span><span class="s1">dout</span><span class="s2">.</span><span class="s1">T</span><span class="s2">, </span><span class="s1">axis</span><span class="s3">=</span><span class="s5">1</span><span class="s2">)</span>
+<a name="l72"><span class="ln">72   </span></a>    <span class="s1">dx </span><span class="s3">= </span><span class="s2">(</span><span class="s1">dout </span><span class="s3">@ </span><span class="s1">w</span><span class="s2">.</span><span class="s1">T</span><span class="s2">).</span><span class="s1">reshape</span><span class="s2">(</span><span class="s1">x</span><span class="s2">.</span><span class="s1">shape</span><span class="s2">)</span>
+<a name="l73"><span class="ln">73   </span></a>    <span class="s1">dw </span><span class="s3">= </span><span class="s1">x_new</span><span class="s2">.</span><span class="s1">T </span><span class="s3">@ </span><span class="s1">dout</span>
+<a name="l74"><span class="ln">74   </span></a>
+<a name="l75"><span class="ln">75   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l76"><span class="ln">76   </span></a>    <span class="s4"># END YOUR CODE HERE</span>
+<a name="l77"><span class="ln">77   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l78"><span class="ln">78   </span></a>
+<a name="l79"><span class="ln">79   </span></a>    <span class="s0">return </span><span class="s1">dx</span><span class="s2">, </span><span class="s1">dw</span><span class="s2">, </span><span class="s1">db</span>
+<a name="l80"><span class="ln">80   </span></a>
+<a name="l81"><span class="ln">81   </span></a>
+<a name="l82"><span class="ln">82   </span></a><span class="s0">def </span><span class="s1">relu_forward</span><span class="s2">(</span><span class="s1">x</span><span class="s2">)</span><span class="s3">:</span>
+<a name="l83"><span class="ln">83   </span></a>    <span class="s4">&quot;&quot;&quot; 
+<a name="l84"><span class="ln">84   </span></a>  Computes the forward pass for a layer of rectified linear units (ReLUs). 
+<a name="l85"><span class="ln">85   </span></a> 
+<a name="l86"><span class="ln">86   </span></a>  Input: 
+<a name="l87"><span class="ln">87   </span></a>  - x: Inputs, of any shape 
+<a name="l88"><span class="ln">88   </span></a> 
+<a name="l89"><span class="ln">89   </span></a>  Returns a tuple of: 
+<a name="l90"><span class="ln">90   </span></a>  - out: Output, of the same shape as x 
+<a name="l91"><span class="ln">91   </span></a>  - cache: x 
+<a name="l92"><span class="ln">92   </span></a>  &quot;&quot;&quot;</span>
+<a name="l93"><span class="ln">93   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l94"><span class="ln">94   </span></a>    <span class="s4"># YOUR CODE HERE:</span>
+<a name="l95"><span class="ln">95   </span></a>    <span class="s4">#   Implement the ReLU forward pass.</span>
+<a name="l96"><span class="ln">96   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l97"><span class="ln">97   </span></a>
+<a name="l98"><span class="ln">98   </span></a>    <span class="s1">out </span><span class="s3">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">maximum</span><span class="s2">(</span><span class="s5">0</span><span class="s2">, </span><span class="s1">x</span><span class="s2">)</span>
+<a name="l99"><span class="ln">99   </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l100"><span class="ln">100  </span></a>    <span class="s4"># END YOUR CODE HERE</span>
+<a name="l101"><span class="ln">101  </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l102"><span class="ln">102  </span></a>
+<a name="l103"><span class="ln">103  </span></a>    <span class="s1">cache </span><span class="s3">= </span><span class="s1">x</span>
+<a name="l104"><span class="ln">104  </span></a>    <span class="s0">return </span><span class="s1">out</span><span class="s2">, </span><span class="s1">cache</span>
+<a name="l105"><span class="ln">105  </span></a>
+<a name="l106"><span class="ln">106  </span></a>
+<a name="l107"><span class="ln">107  </span></a><span class="s0">def </span><span class="s1">relu_backward</span><span class="s2">(</span><span class="s1">dout</span><span class="s2">, </span><span class="s1">cache</span><span class="s2">)</span><span class="s3">:</span>
+<a name="l108"><span class="ln">108  </span></a>    <span class="s4">&quot;&quot;&quot; 
+<a name="l109"><span class="ln">109  </span></a>  Computes the backward pass for a layer of rectified linear units (ReLUs). 
+<a name="l110"><span class="ln">110  </span></a> 
+<a name="l111"><span class="ln">111  </span></a>  Input: 
+<a name="l112"><span class="ln">112  </span></a>  - dout: Upstream derivatives, of any shape 
+<a name="l113"><span class="ln">113  </span></a>  - cache: Input x, of same shape as dout 
+<a name="l114"><span class="ln">114  </span></a> 
+<a name="l115"><span class="ln">115  </span></a>  Returns: 
+<a name="l116"><span class="ln">116  </span></a>  - dx: Gradient with respect to x 
+<a name="l117"><span class="ln">117  </span></a>  &quot;&quot;&quot;</span>
+<a name="l118"><span class="ln">118  </span></a>    <span class="s1">x </span><span class="s3">= </span><span class="s1">cache</span>
+<a name="l119"><span class="ln">119  </span></a>
+<a name="l120"><span class="ln">120  </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l121"><span class="ln">121  </span></a>    <span class="s4"># YOUR CODE HERE:</span>
+<a name="l122"><span class="ln">122  </span></a>    <span class="s4">#   Implement the ReLU backward pass</span>
+<a name="l123"><span class="ln">123  </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l124"><span class="ln">124  </span></a>
+<a name="l125"><span class="ln">125  </span></a>    <span class="s4"># ReLU directs linearly to those &gt; 0</span>
+<a name="l126"><span class="ln">126  </span></a>    <span class="s1">dx </span><span class="s3">= </span><span class="s1">dout </span><span class="s3">* </span><span class="s2">(</span><span class="s1">x </span><span class="s3">&gt; </span><span class="s5">0</span><span class="s2">)</span>
+<a name="l127"><span class="ln">127  </span></a>
+<a name="l128"><span class="ln">128  </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l129"><span class="ln">129  </span></a>    <span class="s4"># END YOUR CODE HERE</span>
+<a name="l130"><span class="ln">130  </span></a>    <span class="s4"># ================================================================ #</span>
+<a name="l131"><span class="ln">131  </span></a>
+<a name="l132"><span class="ln">132  </span></a>    <span class="s0">return </span><span class="s1">dx</span>
+<a name="l133"><span class="ln">133  </span></a>
+<a name="l134"><span class="ln">134  </span></a>
+<a name="l135"><span class="ln">135  </span></a><span class="s0">def </span><span class="s1">softmax_loss</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">)</span><span class="s3">:</span>
+<a name="l136"><span class="ln">136  </span></a>    <span class="s4">&quot;&quot;&quot; 
+<a name="l137"><span class="ln">137  </span></a>  Computes the loss and gradient for softmax classification. 
+<a name="l138"><span class="ln">138  </span></a> 
+<a name="l139"><span class="ln">139  </span></a>  Inputs: 
+<a name="l140"><span class="ln">140  </span></a>  - x: Input data, of shape (N, C) where x[i, j] is the score for the jth class 
+<a name="l141"><span class="ln">141  </span></a>    for the ith input. 
+<a name="l142"><span class="ln">142  </span></a>  - y: Vector of labels, of shape (N,) where y[i] is the label for x[i] and 
+<a name="l143"><span class="ln">143  </span></a>    0 &lt;= y[i] &lt; C 
+<a name="l144"><span class="ln">144  </span></a> 
+<a name="l145"><span class="ln">145  </span></a>  Returns a tuple of: 
+<a name="l146"><span class="ln">146  </span></a>  - loss: Scalar giving the loss 
+<a name="l147"><span class="ln">147  </span></a>  - dx: Gradient of the loss with respect to x 
+<a name="l148"><span class="ln">148  </span></a>  &quot;&quot;&quot;</span>
+<a name="l149"><span class="ln">149  </span></a>
+<a name="l150"><span class="ln">150  </span></a>    <span class="s1">probs </span><span class="s3">= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">exp</span><span class="s2">(</span><span class="s1">x </span><span class="s3">- </span><span class="s1">np</span><span class="s2">.</span><span class="s1">max</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">axis</span><span class="s3">=</span><span class="s5">1</span><span class="s2">, </span><span class="s1">keepdims</span><span class="s3">=</span><span class="s0">True</span><span class="s2">))</span>
+<a name="l151"><span class="ln">151  </span></a>    <span class="s1">probs </span><span class="s3">/= </span><span class="s1">np</span><span class="s2">.</span><span class="s1">sum</span><span class="s2">(</span><span class="s1">probs</span><span class="s2">, </span><span class="s1">axis</span><span class="s3">=</span><span class="s5">1</span><span class="s2">, </span><span class="s1">keepdims</span><span class="s3">=</span><span class="s0">True</span><span class="s2">)</span>
+<a name="l152"><span class="ln">152  </span></a>    <span class="s1">N </span><span class="s3">= </span><span class="s1">x</span><span class="s2">.</span><span class="s1">shape</span><span class="s2">[</span><span class="s5">0</span><span class="s2">]</span>
+<a name="l153"><span class="ln">153  </span></a>    <span class="s1">loss </span><span class="s3">= -</span><span class="s1">np</span><span class="s2">.</span><span class="s1">sum</span><span class="s2">(</span><span class="s1">np</span><span class="s2">.</span><span class="s1">log</span><span class="s2">(</span><span class="s1">probs</span><span class="s2">[</span><span class="s1">np</span><span class="s2">.</span><span class="s1">arange</span><span class="s2">(</span><span class="s1">N</span><span class="s2">), </span><span class="s1">y</span><span class="s2">])) </span><span class="s3">/ </span><span class="s1">N</span>
+<a name="l154"><span class="ln">154  </span></a>    <span class="s1">dx </span><span class="s3">= </span><span class="s1">probs</span><span class="s2">.</span><span class="s1">copy</span><span class="s2">()</span>
+<a name="l155"><span class="ln">155  </span></a>    <span class="s1">dx</span><span class="s2">[</span><span class="s1">np</span><span class="s2">.</span><span class="s1">arange</span><span class="s2">(</span><span class="s1">N</span><span class="s2">), </span><span class="s1">y</span><span class="s2">] </span><span class="s3">-= </span><span class="s5">1</span>
+<a name="l156"><span class="ln">156  </span></a>    <span class="s1">dx </span><span class="s3">/= </span><span class="s1">N</span>
+<a name="l157"><span class="ln">157  </span></a>    <span class="s0">return </span><span class="s1">loss</span><span class="s2">, </span><span class="s1">dx</span>
+<a name="l158"><span class="ln">158  </span></a></pre>
+</body>
+</html>
