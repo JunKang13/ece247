@@ -192,7 +192,7 @@ def batchnorm_forward(x, gamma, beta, bn_param):
         # YOUR CODE HERE:
         #   A few steps here:
         #     (1) Calculate the running mean and variance of the minibatch.
-        #     (2) Normalize the activations with the running mean and variance.
+        #     (2) Normalize the activations with the sample mean and variance.
         #     (3) Scale and shift the normalized activations.  Store this
         #         as the variable 'out'
         #     (4) Store any variables you may need for the backward pass in
@@ -281,7 +281,7 @@ def dropout_forward(x, dropout_param):
   Inputs:
   - x: Input data, of any shape
   - dropout_param: A dictionary with the following keys:
-    - p: Dropout parameter. We drop each neuron output with probability p.
+    - p: Dropout parameter. We keep each neuron output with probability p.
     - mode: 'test' or 'train'. If the mode is train, then perform dropout;
       if the mode is test, then just return the input.
     - seed: Seed for the random number generator. Passing seed makes this
