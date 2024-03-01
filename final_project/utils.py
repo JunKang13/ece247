@@ -1,13 +1,6 @@
 import numpy as np
-
-
-class Dataloader(object):
-    def __init__(self, X, y):
-        self.X = X
-        self.y = y
-
-    def __len__(self):
-        return self.X.shape[0]
+import torch
+from torch.utils.data import DataLoader, TensorDataset, IterableDataset
 
 
 def init_data(subject=None, verbose=False):
@@ -50,12 +43,13 @@ def load_data(X_train, y_train, X_test, y_test, verbose=False):
     X_test /= np.std(X_train, axis=0)
 
     # 5 folds including validation
-    permutation = np.random.permutation(X_train.shape[0])
-    train_indices = 0.8 * X_train.shape[0]
-    X_new_train = X_train[permutation[:int(train_indices)]]
-    y_new_train = y_train[permutation[:int(train_indices)]]
-    X_new_val = X_train[permutation[int(train_indices):]]
-    y_new_val = y_train[permutation[int(train_indices):]]
+    train_subset, val_subset = torch.utils.data.random_split(X_train, [int(0.8 * X_train.shape[0]), int(0.2 * X_train.shape[0])],
+                                                             generator=torch.Generator().manual_seed(1))
+    X_new_train = X_train[train_subset.indices]
+    y_new_train = y_train[train_subset.indices]
+
+    X_new_val = X_train[val_subset.indices]
+    y_new_val = y_train[val_subset.indices]
 
     if verbose:
         print("X_new_train shape: {}".format(X_new_train.shape))
@@ -63,12 +57,14 @@ def load_data(X_train, y_train, X_test, y_test, verbose=False):
         print("X_new_val shape: {}".format(X_new_val.shape))
         print("y_new_val shape: {}".format(y_new_val.shape))
 
-    train_set = Dataloader(X_new_train, y_new_train)
-    val_set = Dataloader(X_new_val, y_new_val)
-    test_set = Dataloader(X_test, y_test)
+    X_tensor_train = torch.tensor(X_new_train, dtype=torch.float32)
+    y_tensor_train = torch.tensor(y_new_train, dtype=torch.long)
+    train_set = IterableDataset(X_tensor_train, y_tensor_train)
+    train_loader = DataLoader(train_set, batch_size=32, shuffle=True)
 
-    return train_set, val_set, test_set
+    return train_loader
 
 
 X_train, y_train, X_test, y_test = init_data(subject=None, verbose=True)
-train_set, val_set, test_set = load_data(X_train, y_train, X_test, y_test, verbose=True)
+train_loader = load_data(X_train, y_train, X_test, y_test, verbose=True)
+print(train_loader)
