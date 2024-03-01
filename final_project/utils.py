@@ -39,6 +39,7 @@ def load_data(X_train, y_train, X_test, y_test, verbose=False):
     # feature scaling
     X_train -= np.mean(X_train, axis=0)
     X_train /= np.std(X_train, axis=0)
+    X_train = X_train.reshape(X_train.shape[0], 1, X_train.shape[-2], X_train.shape[-1])
     X_test -= np.mean(X_train, axis=0)
     X_test /= np.std(X_train, axis=0)
 
