@@ -1,6 +1,7 @@
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, TensorDataset, IterableDataset
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, TensorDataset
 
 
 def init_data(subject=None, verbose=False):
@@ -42,26 +43,19 @@ def load_data(X_train, y_train, X_test, y_test, verbose=False):
     X_train = X_train.reshape(X_train.shape[0], 1, X_train.shape[-2], X_train.shape[-1])
     X_test -= np.mean(X_train, axis=0)
     X_test /= np.std(X_train, axis=0)
+    X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[-2], X_test.shape[-1])
 
     # 5 folds including validation
     X_tensor_train = torch.tensor(X_train, dtype=torch.float32)
     y_tensor_train = torch.tensor(y_train, dtype=torch.long)
+    X_tensor_test = torch.tensor(X_test, dtype=torch.float32)
+    y_tensor_test = torch.tensor(y_test, dtype=torch.long)
     train_set = TensorDataset(X_tensor_train, y_tensor_train)
     train_subset, val_subset = torch.utils.data.random_split(train_set,
                                                              [int(0.8 * X_train.shape[0]), int(0.2 * X_train.shape[0])],
                                                              generator=torch.Generator().manual_seed(1))
-    # X_new_train = train_subset.dataset.data[train_subset.indices]
-    # y_new_train = train_subset.dataset.targets[train_subset.indices]
-    #
-    # X_new_val = val_subset.dataset.data[val_subset.indices]
-    # y_new_val = val_subset.dataset.targets[val_subset.indices]
-    #
-    # if verbose:
-    #     print("X_new_train shape: {}".format(X_new_train.shape))
-    #     print("y_new_train shape: {}".format(y_new_train.shape))
-    #     print("X_new_val shape: {}".format(X_new_val.shape))
-    #     print("y_new_val shape: {}".format(y_new_val.shape))
 
     train_loader = torch.utils.data.DataLoader(train_subset, shuffle=True, batch_size=32)
     val_loader = torch.utils.data.DataLoader(val_subset, shuffle=False, batch_size=32)
-    return train_loader, val_loader
+    test_loader = torch.utils.data.DataLoader(TensorDataset(X_tensor_test, y_tensor_test))
+    return train_loader, val_loader, test_loader
