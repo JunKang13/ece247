@@ -16,7 +16,7 @@ class deepCNN(nn.Module):
             nn.ELU(alpha=0.9, inplace=True),
             nn.BatchNorm2d(num_features=25, momentum=0.15),
             nn.MaxPool2d(kernel_size=(1, 3), stride=(1, 3)),
-            nn.Dropout2d(p=0.15)
+            nn.Dropout2d(p=0.4)
         )
 
         self.ConvLayer2 = nn.Sequential(
@@ -24,7 +24,7 @@ class deepCNN(nn.Module):
             nn.ELU(alpha=0.9, inplace=True),
             nn.BatchNorm2d(num_features=50, momentum=0.15),
             nn.MaxPool2d(kernel_size=(1, 3), stride=(1, 3)),
-            nn.Dropout2d(p=0.15)
+            nn.Dropout2d(p=0.4)
         )
 
         self.ConvLayer3 = nn.Sequential(
@@ -32,7 +32,7 @@ class deepCNN(nn.Module):
             nn.ELU(alpha=0.9, inplace=True),
             nn.BatchNorm2d(num_features=100, momentum=0.15),
             nn.MaxPool2d(kernel_size=(1, 3), stride=(1, 3)),
-            nn.Dropout2d(p=0.15)
+            nn.Dropout2d(p=0.4)
         )
 
         self.ConvLayer4 = nn.Sequential(
@@ -40,11 +40,12 @@ class deepCNN(nn.Module):
             nn.ELU(alpha=0.9, inplace=True),
             nn.BatchNorm2d(num_features=200, momentum=0.15),
             nn.MaxPool2d(kernel_size=(1, 3), stride=(1, 3)),
-            nn.Dropout2d(p=0.15)
+            nn.Dropout2d(p=0.4)
         )
         # Linear classification layer
         # The number of linear units will be determined after we know the size of the flattened feature map
-        self.fc = None  # Will be initialized after the first forward pass
+        self.fc1 = None  # Will be initialized after the first forward pass
+        self.fc2 = nn.Linear(100, 4)
 
     def forward(self, x):
         # First convolution and max pooling layers
@@ -58,10 +59,12 @@ class deepCNN(nn.Module):
         x = x.view(x.size(0), -1)
 
         # Initialize the fc layer if it's the first forward pass
-        if self.fc is None:
-            self.fc = nn.Linear(x.size(1), 4)  # Number of features by number of classes
-            self.fc = self.fc.to(x.device)  # Move to the same device as x
+        if self.fc1 is None:
+            self.fc1 = nn.Linear(x.size(1), 100)  # Number of features by number of classes
+            self.fc1 = self.fc1.to(x.device)  # Move to the same device as x
 
         # Classification layer
-        x = self.fc(x)
+        x = self.fc1(x)
+        x = nn.functional.relu(x)
+        x = self.fc2(x)
         return F.softmax(x, dim=1)

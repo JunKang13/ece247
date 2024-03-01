@@ -36,6 +36,30 @@ def init_data(subject=None, verbose=False):
     return X_train_subject, y_train_subject, X_test_subject, y_test_subject
 
 
+def preprocess_data(X_train, y_train, X_test, y_test, verbose=False):
+    # X_train = X_train[:, :, 50:950]
+    # X_test = X_test[:, :, 50:950]
+    X__train_max = np.max(X_train.reshape(X_train.shape[0], X_train.shape[1], -1, 2), axis=3)
+    X_test_max = np.max(X_test.reshape(X_test.shape[0], X_test.shape[1], -1, 2), axis=3)
+    X_average_train = np.mean(X_train.reshape(X_train.shape[0], X_train.shape[1], -1, 2), axis=3)
+    X_average_train = X_average_train + np.random.normal(0.0, 0.5, X_average_train.shape)
+    total_X_train = np.vstack((X__train_max, X_average_train))
+    total_y_train = np.hstack((y_train, y_train))
+    for i in range(2):
+        X_subsample = X_train[:, :, i::2] + np.random.normal(0.0, 0.5, X_train[:, :, i::2].shape)
+
+        total_X_train = np.vstack((total_X_train, X_subsample))
+        total_y_train = np.hstack((total_y_train, y_train))
+
+    if verbose:
+        print("Training data shape: {}".format(total_X_train.shape), end=" ")
+        print("Training target shape: {}".format(total_y_train.shape))
+        print("Testing data shape: {}".format(X_test_max.shape), end=" ")
+        print("Testing target shape: {}".format(y_test.shape))
+
+    return total_X_train, total_y_train, X_test_max, y_test
+
+
 def load_data(X_train, y_train, X_test, y_test, verbose=False):
     # feature scaling
     X_train -= np.mean(X_train, axis=0)
