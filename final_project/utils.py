@@ -37,8 +37,8 @@ def init_data(subject=None, verbose=False):
 
 
 def preprocess_data(X_train, y_train, X_test, y_test, verbose=False):
-    # X_train = X_train[:, :, 50:950]
-    # X_test = X_test[:, :, 50:950]
+    X_train = X_train[:, :, :500]
+    X_test = X_test[:, :, :500]
     X__train_max = np.max(X_train.reshape(X_train.shape[0], X_train.shape[1], -1, 2), axis=3)
     X_test_max = np.max(X_test.reshape(X_test.shape[0], X_test.shape[1], -1, 2), axis=3)
     X_average_train = np.mean(X_train.reshape(X_train.shape[0], X_train.shape[1], -1, 2), axis=3)
@@ -62,12 +62,15 @@ def preprocess_data(X_train, y_train, X_test, y_test, verbose=False):
 
 def load_data(X_train, y_train, X_test, y_test, verbose=False):
     # feature scaling
-    X_train -= np.mean(X_train, axis=0)
-    X_train /= np.std(X_train, axis=0)
-    X_train = X_train.reshape(X_train.shape[0], 1, X_train.shape[-2], X_train.shape[-1])
-    X_test -= np.mean(X_train, axis=0)
-    X_test /= np.std(X_train, axis=0)
-    X_test = X_test.reshape(X_test.shape[0], 1, X_test.shape[-2], X_test.shape[-1])
+    x_mean = np.mean(X_train, axis=0)
+    x_std = np.std(X_train, axis=0)
+    X_train -= x_mean
+    X_train /= x_std
+    X_test -= x_mean
+    X_test /= x_std
+
+    X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)
+    X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
 
     # 5 folds including validation
     X_tensor_train = torch.tensor(X_train, dtype=torch.float32)

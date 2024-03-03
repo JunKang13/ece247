@@ -9,37 +9,37 @@ class deepCNN(nn.Module):
         super(deepCNN, self).__init__()
 
         self.ConvLayer1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=25, kernel_size=(1, 10), stride=(1, 1)),
+            nn.Conv2d(in_channels=22, out_channels=32, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
             nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=25, momentum=0.15),
-            nn.Conv2d(in_channels=25, out_channels=25, kernel_size=(22, 1)),
+            nn.BatchNorm2d(num_features=32, momentum=0.1),
+            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
             nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=25, momentum=0.15),
-            nn.MaxPool2d(kernel_size=(1, 3), stride=(1, 3)),
+            nn.BatchNorm2d(num_features=32, momentum=0.1),
+            nn.MaxPool2d(kernel_size=(3, 1), padding=(1, 0)),
             nn.Dropout2d(p=0.4)
         )
 
         self.ConvLayer2 = nn.Sequential(
-            nn.Conv2d(in_channels=25, out_channels=50, kernel_size=(1, 10), stride=(1, 1)),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
             nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=50, momentum=0.15),
-            nn.MaxPool2d(kernel_size=(1, 3), stride=(1, 3)),
+            nn.BatchNorm2d(num_features=64, momentum=0.1),
+            nn.MaxPool2d(kernel_size=(3, 1), padding=(1, 0)),
             nn.Dropout2d(p=0.4)
         )
 
         self.ConvLayer3 = nn.Sequential(
-            nn.Conv2d(in_channels=50, out_channels=100, kernel_size=(1, 10), stride=(1, 1)),
+            nn.Conv2d(in_channels=64, out_channels=128, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
             nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=100, momentum=0.15),
-            nn.MaxPool2d(kernel_size=(1, 3), stride=(1, 3)),
+            nn.BatchNorm2d(num_features=128, momentum=0.1),
+            nn.MaxPool2d(kernel_size=(3, 1), padding=(1, 0)),
             nn.Dropout2d(p=0.4)
         )
 
         self.ConvLayer4 = nn.Sequential(
-            nn.Conv2d(in_channels=100, out_channels=200, kernel_size=(1, 10), stride=(1, 1)),
+            nn.Conv2d(in_channels=128, out_channels=256, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
             nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=200, momentum=0.15),
-            nn.MaxPool2d(kernel_size=(1, 3), stride=(1, 3)),
+            nn.BatchNorm2d(num_features=256, momentum=0.1),
+            nn.MaxPool2d(kernel_size=(3, 1), padding=(1, 0)),
             nn.Dropout2d(p=0.4)
         )
         # Linear classification layer
@@ -49,6 +49,7 @@ class deepCNN(nn.Module):
 
     def forward(self, x):
         # First convolution and max pooling layers
+
         x = self.ConvLayer1(x)
         # Subsequent convolution and max pooling layers
         x = self.ConvLayer2(x)
