@@ -1,4 +1,4 @@
-import numpy as np
+﻿import numpy as np
 
 from nndl.layers import *
 from nndl.conv_layers import *

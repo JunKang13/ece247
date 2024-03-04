@@ -1,7 +1,5 @@
 import numpy as np
-import torch
-import torch.nn.functional as F
-from torch.utils.data import DataLoader, TensorDataset
+from keras.utils import to_categorical
 
 
 def init_data(subject=None, verbose=False):
@@ -69,20 +67,40 @@ def load_data(X_train, y_train, X_test, y_test, verbose=False):
     X_test -= x_mean
     X_test /= x_std
 
-    X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)
-    X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
+    ind_valid = np.random.choice(8460, 1500, replace=False)
+    ind_train = np.array(list(set(range(8460)).difference(set(ind_valid))))
+    (x_train, x_valid) = X_train[ind_train], X_train[ind_valid]
+    (y_train, y_valid) = y_train[ind_train], y_train[ind_valid]
+
+    y_train = to_categorical(y_train, 4)
+    y_valid = to_categorical(y_valid, 4)
+
+    x_train = x_train.reshape(x_train.shape[0], x_train.shape[1], x_train.shape[2], 1)
+    x_valid = x_valid.reshape(x_valid.shape[0], x_valid.shape[1], x_train.shape[2], 1)
+
+    x_train = np.swapaxes(x_train, 1, 3)
+    x_train = np.swapaxes(x_train, 1, 2)
+    x_valid = np.swapaxes(x_valid, 1, 3)
+    x_valid = np.swapaxes(x_valid, 1, 2)
+
+    x_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
+    x_test = np.swapaxes(x_test, 1, 3)
+    x_test = np.swapaxes(x_test, 1, 2)
+    y_test = to_categorical(y_test, 4)
 
     # 5 folds including validation
-    X_tensor_train = torch.tensor(X_train, dtype=torch.float32)
-    y_tensor_train = torch.tensor(y_train, dtype=torch.long)
-    X_tensor_test = torch.tensor(X_test, dtype=torch.float32)
-    y_tensor_test = torch.tensor(y_test, dtype=torch.long)
-    train_set = TensorDataset(X_tensor_train, y_tensor_train)
-    train_subset, val_subset = torch.utils.data.random_split(train_set,
-                                                             [int(0.8 * X_train.shape[0]), int(0.2 * X_train.shape[0])],
-                                                             generator=torch.Generator().manual_seed(1))
+    # X_tensor_train = torch.tensor(X_train, dtype=torch.float32)
+    # y_tensor_train = torch.tensor(y_train, dtype=torch.long)
+    # X_tensor_test = torch.tensor(X_test, dtype=torch.float32)
+    # y_tensor_test = torch.tensor(y_test, dtype=torch.long)
 
-    train_loader = torch.utils.data.DataLoader(train_subset, shuffle=True, batch_size=32)
-    val_loader = torch.utils.data.DataLoader(val_subset, shuffle=False, batch_size=32)
-    test_loader = torch.utils.data.DataLoader(TensorDataset(X_tensor_test, y_tensor_test))
-    return train_loader, val_loader, test_loader
+    # train_set = TensorDataset(X_tensor_train, y_tensor_train)
+    # train_subset, val_subset = torch.utils.data.random_split(train_set,
+    #                                                          [int(0.8 * X_train.shape[0]), int(0.2 * X_train.shape[0])],
+    #                                                          generator=torch.Generator().manual_seed(1))
+    #
+    # train_loader = torch.utils.data.DataLoader(train_subset, shuffle=True, batch_size=32)
+    # val_loader = torch.utils.data.DataLoader(val_subset, shuffle=False, batch_size=32)
+    # test_loader = torch.utils.data.DataLoader(TensorDataset(X_tensor_test, y_tensor_test))
+    # return train_loader, val_loader, test_loader
+    return x_train, y_train, x_valid, y_valid, x_test, y_test

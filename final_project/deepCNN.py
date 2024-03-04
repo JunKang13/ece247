@@ -10,42 +10,44 @@ class deepCNN(nn.Module):
 
         self.ConvLayer1 = nn.Sequential(
             nn.Conv2d(in_channels=22, out_channels=32, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
-            nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=32, momentum=0.1),
-            nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
-            nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=32, momentum=0.1),
+            nn.ELU(),
+            # nn.BatchNorm2d(num_features=32, momentum=0.1),
+            # nn.Conv2d(in_channels=32, out_channels=32, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
+            # nn.ELU(alpha=0.9, inplace=True),
             nn.MaxPool2d(kernel_size=(3, 1), padding=(1, 0)),
-            nn.Dropout2d(p=0.4)
+            nn.BatchNorm2d(num_features=32),
+            nn.Dropout2d(p=0.5)
         )
 
         self.ConvLayer2 = nn.Sequential(
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
-            nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=64, momentum=0.1),
+            nn.ELU(),
             nn.MaxPool2d(kernel_size=(3, 1), padding=(1, 0)),
-            nn.Dropout2d(p=0.4)
+            nn.BatchNorm2d(num_features=64),
+            nn.Dropout2d(p=0.5)
         )
 
         self.ConvLayer3 = nn.Sequential(
             nn.Conv2d(in_channels=64, out_channels=128, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
-            nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=128, momentum=0.1),
+            nn.ELU(),
             nn.MaxPool2d(kernel_size=(3, 1), padding=(1, 0)),
-            nn.Dropout2d(p=0.4)
+            nn.BatchNorm2d(num_features=128),
+
+            nn.Dropout2d(p=0.5)
         )
 
         self.ConvLayer4 = nn.Sequential(
             nn.Conv2d(in_channels=128, out_channels=256, kernel_size=(15, 1), stride=(1, 1), padding=(7, 0)),
-            nn.ELU(alpha=0.9, inplace=True),
-            nn.BatchNorm2d(num_features=256, momentum=0.1),
+            nn.ELU(),
             nn.MaxPool2d(kernel_size=(3, 1), padding=(1, 0)),
-            nn.Dropout2d(p=0.4)
+            nn.BatchNorm2d(num_features=256),
+
+            nn.Dropout2d(p=0.5)
         )
         # Linear classification layer
         # The number of linear units will be determined after we know the size of the flattened feature map
         self.fc1 = None  # Will be initialized after the first forward pass
-        self.fc2 = nn.Linear(100, 4)
+        self.fc2 = nn.Linear(16, 4)
 
     def forward(self, x):
         # First convolution and max pooling layers
@@ -61,7 +63,7 @@ class deepCNN(nn.Module):
 
         # Initialize the fc layer if it's the first forward pass
         if self.fc1 is None:
-            self.fc1 = nn.Linear(x.size(1), 100)  # Number of features by number of classes
+            self.fc1 = nn.Linear(x.size(1), 16)  # Number of features by number of classes
             self.fc1 = self.fc1.to(x.device)  # Move to the same device as x
 
         # Classification layer
