@@ -58,17 +58,30 @@ def preprocess_data(X_train, y_train, X_test, y_test, verbose=False):
     return total_X_train, total_y_train, X_test_max, y_test
 
 
-def load_data(X_train, y_train, X_test, y_test, verbose=False):
-    # feature scaling
-    x_mean = np.mean(X_train, axis=0)
-    x_std = np.std(X_train, axis=0)
-    X_train -= x_mean
-    X_train /= x_std
-    X_test -= x_mean
-    X_test /= x_std
+def window_data(X_train, y_train, window_size=200, stride=100, verbose=False):
+    num_samples, num_features, num_timepoints = X_train.shape
+    num_windows = (num_timepoints - window_size) // stride
+    X_train_window = np.zeros((num_samples * num_windows, num_features, window_size))
+    y_train_window = np.zeros((num_samples * num_windows,))
 
-    ind_valid = np.random.choice(8460, 1500, replace=False)
-    ind_train = np.array(list(set(range(8460)).difference(set(ind_valid))))
+    for i in range(num_samples):
+        for j in range(num_features):
+            for k in range(num_windows):
+                X_train_window[i * num_windows + k, j, :] = X_train[i, j, k * 100:k * 100 + window_size]
+                y_train_window[i * num_windows + k] = y_train[i]
+
+    if verbose:
+        print("WTraining data shape: {}".format(X_train_window.shape), end=" ")
+        print("WTraining target shape: {}".format(y_train_window.shape))
+
+    return X_train_window, y_train_window
+
+
+
+def load_data(X_train, y_train, X_test, y_test, verbose=False):
+
+    ind_valid = np.random.choice(X_train.shape[0], int(0.2 * X_train.shape[0]), replace=False)
+    ind_train = np.array(list(set(range(X_train.shape[0])).difference(set(ind_valid))))
     (x_train, x_valid) = X_train[ind_train], X_train[ind_valid]
     (y_train, y_valid) = y_train[ind_train], y_train[ind_valid]
 
@@ -87,6 +100,14 @@ def load_data(X_train, y_train, X_test, y_test, verbose=False):
     x_test = np.swapaxes(x_test, 1, 3)
     x_test = np.swapaxes(x_test, 1, 2)
     y_test = to_categorical(y_test, 4)
+
+    if verbose:
+        print("Training data shape: {}".format(x_train.shape), end=" ")
+        print("Training target shape: {}".format(y_train.shape))
+        print("Validation data shape: {}".format(x_valid.shape), end=" ")
+        print("Validation target shape: {}".format(y_valid.shape))
+        print("Testing data shape: {}".format(x_test.shape), end=" ")
+        print("Testing target shape: {}".format(y_test.shape))
 
     # 5 folds including validation
     # X_tensor_train = torch.tensor(X_train, dtype=torch.float32)
