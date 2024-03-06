@@ -125,3 +125,64 @@ def load_data(X_train, y_train, X_test, y_test, verbose=False):
     # test_loader = torch.utils.data.DataLoader(TensorDataset(X_tensor_test, y_tensor_test))
     # return train_loader, val_loader, test_loader
     return x_train, y_train, x_valid, y_valid, x_test, y_test
+
+def train_data_prep(X,y,sub_sample,average,noise):
+    
+    total_X = None
+    total_y = None
+    
+    # Trimming the data (sample,22,1000) -> (sample,22,800)
+    X = X[:,:,0:800]
+    print('Shape of X after trimming:',X.shape)
+    
+    # Maxpooling the data (sample,22,800) -> (sample,22,800/sub_sample)
+    X_max = np.max(X.reshape(X.shape[0], X.shape[1], -1, sub_sample), axis=3)
+    
+    
+    total_X = X_max
+    total_y = y
+    print('Shape of X after maxpooling:',total_X.shape)
+    
+    # Averaging + noise 
+    X_average = np.mean(X.reshape(X.shape[0], X.shape[1], -1, average),axis=3)
+    X_average = X_average + np.random.normal(0.0, 0.5, X_average.shape)
+    
+    total_X = np.vstack((total_X, X_average))
+    total_y = np.hstack((total_y, y))
+    print('Shape of X after averaging+noise and concatenating:',total_X.shape)
+    
+    # Subsampling
+    
+    for i in range(sub_sample):
+        
+        X_subsample = X[:, :, i::sub_sample] + \
+                            (np.random.normal(0.0, 0.5, X[:, :,i::sub_sample].shape) if noise else 0.0)
+            
+        total_X = np.vstack((total_X, X_subsample))
+        total_y = np.hstack((total_y, y))
+        
+    
+    print('Shape of X after subsampling and concatenating:',total_X.shape)
+    print('Shape of Y:',total_y.shape)
+    return total_X,total_y
+
+
+def test_data_prep(X):
+    
+    total_X = None
+    
+    
+    # Trimming the data (sample,22,1000) -> (sample,22,800)
+    X = X[:,:,0:800]
+    print('Shape of X after trimming:',X.shape)
+    
+    # Maxpooling the data (sample,22,800) -> (sample,22,800/sub_sample)
+    X_max = np.max(X.reshape(X.shape[0], X.shape[1], -1, 2), axis=3)
+    
+    
+    total_X = X_max
+    print('Shape of X after maxpooling:',total_X.shape)
+    
+    return total_X
+
+
