@@ -1,10 +1,12 @@
 import numpy as np
-from tensorflow import keras
+import tensorflow as tf
+
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.utils import to_categorical
 from scipy.signal import cwt, ricker
 import os
 os.environ['Cuda_VISIBLE_DEVICES'] = "0"
-
+tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
 
 def init_data(subject=None, verbose=False):
     """
@@ -105,7 +107,7 @@ def cwt_transform(eeg, scale, wavelet, verbose=False):
     for i in range(num_samples):
         for j in range(num_features):
             cwt_temp = cwt(eeg[i, j, :], wavelet, scale)
-            eeg_cwt[i, j, :, :] = cwt_temp
+            eeg_cwt[i, j, :] = cwt_temp
 
     if verbose:
         print("CWT Transformed data shape: {}".format(eeg_cwt.shape))
