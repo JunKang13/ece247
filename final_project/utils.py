@@ -41,7 +41,7 @@ def init_data(subject=None, verbose=False):
 
 
 def preprocess_data(X_train, y_train, X_test, y_test, verbose=False):
-    ind_valid = np.random.choice(X_train.shape[0], int(0.25 * X_train.shape[0]), replace=False)
+    ind_valid = np.random.choice(X_train.shape[0], int(0.1 * X_train.shape[0]), replace=False)
     ind_train = np.array(list(set(range(X_train.shape[0])).difference(set(ind_valid))))
     (x_train, x_valid) = X_train[ind_train], X_train[ind_valid]
     (y_train, y_valid) = y_train[ind_train], y_train[ind_valid]
