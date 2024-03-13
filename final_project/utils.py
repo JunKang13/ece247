@@ -44,9 +44,9 @@ def preprocess_data(X_train, y_train, X_test, y_test, verbose=False):
     (x_train, x_valid) = X_train[ind_train], X_train[ind_valid]
     (y_train, y_valid) = y_train[ind_train], y_train[ind_valid]
 
-    X_train = x_train[:, :, :800]
-    X_valid = x_valid[:, :, :800]
-    X_test = X_test[:, :, :800]
+    X_train = x_train[:, :, :500]
+    X_valid = x_valid[:, :, :500]
+    X_test = X_test[:, :, :500]
     X__train_max = np.max(X_train.reshape(X_train.shape[0], X_train.shape[1], -1, 2), axis=3)
     X_test_max = np.max(X_test.reshape(X_test.shape[0], X_test.shape[1], -1, 2), axis=3)
     X_average_train = np.mean(X_train.reshape(X_train.shape[0], X_train.shape[1], -1, 2), axis=3)
