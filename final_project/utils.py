@@ -24,6 +24,13 @@ def init_data(subject=None, verbose=False):
     person_train_valid = np.load("person_train_valid.npy")
     person_test = np.load("person_test.npy")
     if subject is None:
+        if verbose:
+            print("Training/Valid data shape: {}".format(X_train_valid.shape), end=" ")
+            print("Training/Valid target shape: {}".format(y_train_valid.shape))
+            print("Test data shape: {}".format(X_test.shape), end=" ")
+            print("Test target shape: {}".format(y_test.shape))
+            print("Person train/valid shape: {}".format(person_train_valid.shape), end=" ")
+            print("Person test shape: {}".format(person_test.shape))
         return X_train_valid, y_train_valid, X_test, y_test
 
     X_train_subject = X_train_valid[np.where(person_train_valid == subject)[0]]
@@ -40,15 +47,15 @@ def init_data(subject=None, verbose=False):
     return X_train_subject, y_train_subject, X_test_subject, y_test_subject
 
 
-def preprocess_data(X_train, y_train, X_test, y_test, verbose=False, val_ratio=0.1, sample_size=500):
+def preprocess_data(X_train, y_train, X_test, y_test, verbose=False, time_stamp=500, val_ratio=0.1):
     ind_valid = np.random.choice(X_train.shape[0], int(val_ratio * X_train.shape[0]), replace=False)
     ind_train = np.array(list(set(range(X_train.shape[0])).difference(set(ind_valid))))
     (x_train, x_valid) = X_train[ind_train], X_train[ind_valid]
     (y_train, y_valid) = y_train[ind_train], y_train[ind_valid]
 
-    X_train = x_train[:, :, :sample_size]
-    X_valid = x_valid[:, :, :sample_size]
-    X_test = X_test[:, :, :sample_size]
+    X_train = x_train[:, :, :time_stamp]
+    X_valid = x_valid[:, :, :time_stamp]
+    X_test = X_test[:, :, :time_stamp]
     X__train_max = np.max(X_train.reshape(X_train.shape[0], X_train.shape[1], -1, 2), axis=3)
     X_test_max = np.max(X_test.reshape(X_test.shape[0], X_test.shape[1], -1, 2), axis=3)
     X_average_train = np.mean(X_train.reshape(X_train.shape[0], X_train.shape[1], -1, 2), axis=3)
