@@ -5,8 +5,10 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.utils import to_categorical
 from scipy.signal import cwt, ricker
 import os
+
 os.environ['Cuda_VISIBLE_DEVICES'] = "0"
 tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(log_device_placement=True))
+
 
 def init_data(subject=None, verbose=False):
     """
@@ -41,7 +43,7 @@ def init_data(subject=None, verbose=False):
 
 
 def preprocess_data(X_train, y_train, X_test, y_test, verbose=False):
-    ind_valid = np.random.choice(X_train.shape[0], int(0.25 * X_train.shape[0]), replace=False)
+    ind_valid = np.random.choice(X_train.shape[0], int(0.1 * X_train.shape[0]), replace=False)
     ind_train = np.array(list(set(range(X_train.shape[0])).difference(set(ind_valid))))
     (x_train, x_valid) = X_train[ind_train], X_train[ind_valid]
     (y_train, y_valid) = y_train[ind_train], y_train[ind_valid]
@@ -115,7 +117,6 @@ def cwt_transform(eeg, scale, wavelet, verbose=False):
 
 
 def load_data(x_train, y_train, x_valid, y_valid, X_test, y_test, verbose=False):
-
     y_train = to_categorical(y_train, 4)
     y_valid = to_categorical(y_valid, 4)
 
